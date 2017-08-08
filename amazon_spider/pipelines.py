@@ -4,19 +4,21 @@
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
-from amazon_spider.items import ReviewDetailItem
-from amazon_spider.sql import ReviewDetail
+from amazon_scrapy.sql import ReviewSql
+from amazon_scrapy.items import ReviewDetailItem
+from amazon_scrapy.items import ReviewProfileItem
 
 
-class AmazonSpiderPipeline(object):
-    def __init__(self):
-        self.sql = ReviewDetail()
+class AmazonScrapyPipeline(object):
 
     def process_item(self, item, spider):
+        if isinstance(item, ReviewProfileItem):
+            a = ReviewSql()
+            a.insert_profile_item(item)
+            print('save review profile--[asin]:', item['asin'], '[title]:', item['title'])
+            pass
         if isinstance(item, ReviewDetailItem):
-            item['star'] = item['star'].split('out of 5 stars')[0].strip()
-            item['date'] = item['date'].split('on')[1].strip()
-            self.sql.insert_detail_item(item)
-            print('save reivew:', item)
-        #     pass
-        pass
+            a = ReviewSql()
+            a.insert_detail_item(item)
+            print('save review detail--[asin]:', item['asin'], '[reviewID]:', item['review_id'])
+            pass

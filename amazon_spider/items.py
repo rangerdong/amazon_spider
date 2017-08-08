@@ -8,9 +8,24 @@
 import scrapy
 
 
-class AmazonSpiderItem(scrapy.Item):
+class AmazonScrapyItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
+    pass
+
+
+class ReviewProfileItem(scrapy.Item):
+    asin = scrapy.Field()
+    product = scrapy.Field()
+    brand = scrapy.Field()
+    seller = scrapy.Field()
+    review_total = scrapy.Field()
+    review_rate = scrapy.Field()
+    pct_five = scrapy.Field()
+    pct_four = scrapy.Field()
+    pct_three = scrapy.Field()
+    pct_two = scrapy.Field()
+    pct_one = scrapy.Field()
     pass
 
 
@@ -23,3 +38,8 @@ class ReviewDetailItem(scrapy.Item):
     title = scrapy.Field()
     content = scrapy.Field()
     pass
+
+
+
+
+
