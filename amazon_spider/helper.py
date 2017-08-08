@@ -1,3 +1,5 @@
+import datetime
+
 
 class Helper(object):
 
@@ -17,3 +19,13 @@ class Helper(object):
     @classmethod
     def get_date_split_str(cls, value):
         return value.split('on')[1].strip()
+
+    @classmethod
+    def convert_date_str(cls, date_str):
+        return datetime.datetime.strptime(date_str, '%B %d, %Y')
+
+    @classmethod
+    def delay_forty_days(cls):
+        now = datetime.datetime.now()
+        delay14 = now + datetime.timedelta(days=-40)  # 计算往前40天之后的时间
+        return delay14

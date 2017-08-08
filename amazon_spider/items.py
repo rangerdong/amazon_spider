@@ -33,6 +33,7 @@ class ReviewDetailItem(scrapy.Item):
     asin = scrapy.Field()
     review_id = scrapy.Field()
     reviewer = scrapy.Field()
+    review_url = scrapy.Field()
     star = scrapy.Field()
     date = scrapy.Field()
     title = scrapy.Field()

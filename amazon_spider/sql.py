@@ -1,5 +1,5 @@
 import pymysql
-from amazon_scrapy import settings
+from amazon_spider import settings
 
 
 class ReviewSql:
@@ -44,15 +44,15 @@ class ReviewSql:
         pass
 
     def insert_detail_item(self, item):
-        sql = "INSERT INTO `review_detail`(`asin`, `review_id`, `reviewer`, `star`, `date`, `title`, `content`) " \
-              "VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s')" % \
-              (item['asin'], item['review_id'], item['reviewer'], item['star'], item['date'], item['title'], item['content'])
+        sql = "INSERT INTO `review_detail`(`asin`, `review_id`, `reviewer`, `review_url`, `star`, `date`, `title`, `content`) " \
+              "VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')" % \
+              (item['asin'], item['review_id'], item['reviewer'], item['review_url'], item['star'], item['date'], item['title'], item['content'])
         try:
             if self.check_exist_detail(item['asin'], item['review_id']):
                 pass
             else:
                 self.cursor.execute(sql)
-            self.conn.commit()
+                self.conn.commit()
         except:
             self.conn.rollback()
         pass
