@@ -19,7 +19,8 @@ class AmazonSpiderPipeline(object):
             a = ReviewSql()
             a.insert_profile_item(item)
             print('save review profile--[asin]:', item['asin'])
-            pass
+            return item
+
         if isinstance(item, ReviewDetailItem):
             a = ReviewSql()
             delay_date = Helper.delay_forty_days()  # 40天的截止时间

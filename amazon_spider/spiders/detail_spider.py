@@ -18,9 +18,9 @@ class ReviewSpider(scrapy.Spider):
         ]
 
     def start_requests(self):
-        yield scrapy.Request(self.start_urls[0], callback=self.get_detail, meta={'url': self.start_urls[0]})
-        yield scrapy.Request(self.start_urls[1], callback=self.get_detail, meta={'url': self.start_urls[1]})
-        yield scrapy.Request(self.start_urls[2], callback=self.get_detail, meta={'url': self.start_urls[2]})
+        yield scrapy.Request(self.start_urls[0], callback=self.get_detail)
+        yield scrapy.Request(self.start_urls[1], callback=self.get_detail)
+        yield scrapy.Request(self.start_urls[2], callback=self.get_detail)
 
     def parse(self, response):
         reviews = response.css('.review-views .review')
@@ -33,7 +33,8 @@ class ReviewSpider(scrapy.Spider):
             item['review_url'] = row.css('.review-title::attr(href)')[0].extract()
             item['date'] = Helper.get_date_split_str(row.css('.review-date::text')[0].extract())
             item['star'] = Helper.get_star_split_str(row.css('.review-rating span::text')[0].extract())
-            item['content'] = row.css('.review-data .review-text::text')[0].extract()
+            content = row.css('.review-data .review-text::text').extract()
+            item['content'] = content[0] if len(content) > 0 else ''
             yield item
 
     def get_detail(self, response):

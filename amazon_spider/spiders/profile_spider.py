@@ -32,7 +32,8 @@ class ProfileSpider(scrapy.Spider):
         item['seller'] = item['brand']
         # 获取各星评价百分比数
         review_summary = response.css('.reviewNumericalSummary .histogram '
-                                      '#histogramTable .histogram-review-count::text').extract()
+                                      '#histogramTable tr td:last-child').re(r'\d{1,2}\%')
+
         pct = list(map(lambda x: x[0:-1], review_summary))
 
         item['pct_five'] = pct[0]

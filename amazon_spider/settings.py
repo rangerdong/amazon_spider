@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Scrapy settings for amazon_spider project
+# Scrapy settings for amazon_scrapy project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -16,10 +16,11 @@ NEWSPIDER_MODULE = 'amazon_spider.spiders'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'amazon_spider (+http://www.yourdomain.com)'
+#USER_AGENT = 'amazon_scrapy (+http://www.yourdomain.com)'
+USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36'
 
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
@@ -46,14 +47,14 @@ ROBOTSTXT_OBEY = True
 
 # Enable or disable spider middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
-#SPIDER_MIDDLEWARES = {
-#    'amazon_spider.middlewares.AmazonSpiderSpiderMiddleware': 543,
-#}
+# SPIDER_MIDDLEWARES = {
+#    'amazon_scrapy.middlewares.AmazonScrapySpiderMiddleware': 543,
+# }
 
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 #DOWNLOADER_MIDDLEWARES = {
-#    'amazon_spider.middlewares.MyCustomDownloaderMiddleware': 543,
+#    'amazon_scrapy.middlewares.MyCustomDownloaderMiddleware': 543,
 #}
 
 # Enable or disable extensions
@@ -82,18 +83,26 @@ ITEM_PIPELINES = {
 #AUTOTHROTTLE_DEBUG = False
 
 # Enable and configure HTTP caching (disabled by default)
-# See http://scrapy.readthedocs.org/en/latest/ptopics/downloader-middleware.html#httpcache-middleware-settings
+# See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html#httpcache-middleware-settings
 #HTTPCACHE_ENABLED = True
 #HTTPCACHE_EXPIRATION_SECS = 0
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
-#MYSQL
+
+#mysql
+# MYSQL_HOST =
+# MYSQL_USER = 'amz_spider'
+# MYSQL_PASSWORD = 'zNDcsC3J2f'
+# MYSQL_PORT = '3306'
+# MYSQL_DB = 'amz_spider'
+
 MYSQL = {
-    'host': 'homestead.app',
-    'database': 'amz_spider',
-    'user': 'homestead',
-    'password': 'secret',
-    'port': 3306
+    'host': '192.168.214.129',
+    'port': 3306,
+    'user': 'amz_spider',
+    'password': 'zNDcsC3J2f',
+    'charset': 'utf8mb4',
+    'database': 'amz_spider'
 }
