@@ -19,6 +19,7 @@ class ReviewProfileItem(scrapy.Item):
     product = scrapy.Field()
     brand = scrapy.Field()
     seller = scrapy.Field()
+    image = scrapy.Field()
     review_total = scrapy.Field()
     review_rate = scrapy.Field()
     pct_five = scrapy.Field()

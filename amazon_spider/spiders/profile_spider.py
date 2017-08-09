@@ -28,6 +28,8 @@ class ProfileSpider(scrapy.Spider):
         item['product'] = product[0]
         # 获取产品 brand
         item['brand'] = response.css('.product-by-line a::text').extract()[0]
+        item['image'] = response.css('.product-image img::attr(src)').extract()[0]
+
         # 获取产品商家
         item['seller'] = item['brand']
         # 获取各星评价百分比数

@@ -16,13 +16,11 @@ class AmazonSpiderPipeline(object):
 
     def process_item(self, item, spider):
         if isinstance(item, ReviewProfileItem):
-            a = ReviewSql()
-            a.insert_profile_item(item)
+            ReviewSql.insert_profile_item(item)
             print('save review profile--[asin]:', item['asin'])
             return item
 
         if isinstance(item, ReviewDetailItem):
-            a = ReviewSql()
             delay_date = Helper.delay_forty_days()  # 40天的截止时间
             item_date = Helper.convert_date_str(item['date'])
             if item_date < delay_date:   # 判断是否过了40天限额，如果超出范围 则抛弃此item
@@ -30,7 +28,7 @@ class AmazonSpiderPipeline(object):
             else:
                 item['review_url'] = 'https://www.amazon.com' + item['review_url']
                 item['date'] = item_date.strftime('%Y-%m-%d')
-                a.insert_detail_item(item)
+                ReviewSql.insert_detail_item(item)
                 print('save review detail--[asin]:', item['asin'], '[reviewID]:', item['review_id'])
 
                 return item
