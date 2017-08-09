@@ -8,9 +8,10 @@ from amazon_spider.helper import Helper
 class ReviewSpider(scrapy.Spider):
     name = 'detail'
 
-    def __init__(self, asin, *args, **kwargs):
+    def __init__(self, asin, daily, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.asin = asin
+        self.daily = True if daily == 1 else False   # 判断是否是每日更新
         self.start_urls = [
             'https://www.amazon.com/product-reviews/%s?sortBy=recent&filterByStar=three_star' % self.asin,
             'https://www.amazon.com/product-reviews/%s?sortBy=recent&filterByStar=two_star' % self.asin,

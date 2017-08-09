@@ -16,13 +16,14 @@ class ReviewSql:
         self.cursor.close()
 
     def insert_profile_item(self, item):
-        sql = "INSERT INTO `review_profile`(`asin`, `product`, `brand`, `seller`, `review_total`, `review_rate`, `pct_five`, `pct_four`, `pct_three`, `pct_two`, `pct_one`) " \
-              "VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')" %\
+        sql = "INSERT INTO `review_profile`(`asin`, `product`, `brand`, `seller`, `review_total`, `review_rate`," \
+              " `pct_five`, `pct_four`, `pct_three`, `pct_two`, `pct_one`, `latest_total`) " \
+              "VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')" %\
               (item['asin'], item['product'], item['brand'], item['seller'], item['review_total'], item['review_rate'],
-               item['pct_five'], item['pct_four'], item['pct_three'], item['pct_two'], item['pct_one'])
+               item['pct_five'], item['pct_four'], item['pct_three'], item['pct_two'], item['pct_one'], item['review_total'])
         try:
             if self.check_exist_profile(item['asin']):
-                pass
+                self.update_profile_item(item)
             else:
                 self.cursor.execute(sql)
                 self.conn.commit()
@@ -30,18 +31,25 @@ class ReviewSql:
             self.conn.rollback()
         pass
 
-    def check_exist_profile(self, asin):
-        sql = "SELECT * FROM `review_profile` WHERE (`asin` = '%s')" % (asin)
+    def update_profile_item(self, item):
+        sql = "UPDATE `review_profile` SET `product`='%s', `brand`='%s', `seller`='%s', `review_total`='%s', `review_rate`='%s'," \
+              "`pct_five`='%s', `pct_four`='%s', `pct_three`='%s', `pct_two`='%s', `pct_one`='%s', `latest_total`=`review_total` " \
+              "WHERE `asin`='%s'" % \
+              (item['product'], item['brand'], item['seller'], item['review_total'], item['review_rate'],
+               item['pct_five'], item['pct_four'], item['pct_three'], item['pct_two'], item['pct_one'], item['asin'])
         try:
-            result = self.cursor.execute(sql)
+            self.cursor.execute(sql)
             self.conn.commit()
-            if result:
-                return True
-            else:
-                return False
         except:
             self.conn.rollback()
-        pass
+
+    def check_exist_profile(self, asin):
+        sql = "SELECT * FROM `review_profile` WHERE (`asin` = '%s')" % (asin)
+        result = self.cursor.execute(sql)
+        if result:
+            return True
+        else:
+            return False
 
     def insert_detail_item(self, item):
         sql = "INSERT INTO `review_detail`(`asin`, `review_id`, `reviewer`, `review_url`, `star`, `date`, `title`, `content`) " \
@@ -59,17 +67,11 @@ class ReviewSql:
 
     def check_exist_detail(self, asin, review_id):
         sql = "SELECT * FROM `review_detail` WHERE `asin` = '%s' AND `review_id`='%s'" % (asin, review_id)
-        try:
-            result = self.cursor.execute(sql)
-            self.conn.commit()
-            if result:
-                return True
-            else:
-                return False
-        except:
-            self.rollback()
-        pass
-
+        result = self.cursor.execute(sql)
+        if result:
+            return True
+        else:
+            return False
 
 
 
