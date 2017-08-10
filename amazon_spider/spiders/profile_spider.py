@@ -6,6 +6,12 @@ from amazon_spider.items import ReviewProfileItem
 
 class ProfileSpider(scrapy.Spider):
     name = 'profile'
+    custom_settings = {
+        'LOG_LEVEL': 'ERROR',
+        'LOG_FILE': 'profile.json',
+        'LOG_ENABLED': True,
+        'LOG_STDOUT': True
+    }
 
     def __init__(self, asin, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -17,6 +23,7 @@ class ProfileSpider(scrapy.Spider):
     def parse(self, response):
         item = ReviewProfileItem()
 
+        item['asin'] = response.meta['asin'] if 'asin' in response.meta else self.asin
         # 获取平均评价数值
         average = response.css('.averageStarRatingNumerical a span::text').extract()  # 获取平均评价值
         item['review_rate'] = Helper.get_star_split_str(average[0])  # 获取平均值
@@ -34,7 +41,7 @@ class ProfileSpider(scrapy.Spider):
         item['seller'] = item['brand']
         # 获取各星评价百分比数
         review_summary = response.css('.reviewNumericalSummary .histogram '
-                                      '#histogramTable tr td:last-child').re(r'\d{1,2}\%')
+                                      '#histogramTable tr td:last-child').re(r'\d{1,3}\%')
 
         pct = list(map(lambda x: x[0:-1], review_summary))
 
@@ -43,6 +50,5 @@ class ProfileSpider(scrapy.Spider):
         item['pct_three'] = pct[2]
         item['pct_two'] = pct[3]
         item['pct_one'] = pct[4]
-        item['asin'] = self.asin
 
         yield item

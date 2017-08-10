@@ -1,9 +1,15 @@
 import math
+import subprocess
+
 import scrapy
+from scrapy.crawler import CrawlerProcess, CrawlerRunner
+from scrapy.utils.project import get_project_settings
+from twisted.internet import reactor
 
 from amazon_spider.items import ReviewProfileItem
 from amazon_spider.items import ReviewDetailItem
 from amazon_spider.helper import Helper
+from amazon_spider.spiders.profile_spider import ProfileSpider
 from amazon_spider.sql import ReviewSql
 
 
@@ -13,7 +19,7 @@ class ReviewSpider(scrapy.Spider):
     def __init__(self, asin, daily=0, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.asin = asin
-        self.daily = True if int(daily) == 1 else False   # 判断是否是每日更新
+        self.daily = True if int(daily) == 1 else False  # 判断是否是每日更新
         self.start_urls = [
             'https://www.amazon.com/product-reviews/%s?sortBy=recent&filterByStar=three_star' % self.asin,
             'https://www.amazon.com/product-reviews/%s?sortBy=recent&filterByStar=two_star' % self.asin,
@@ -58,10 +64,28 @@ class ReviewSpider(scrapy.Spider):
                     page_num = math.ceil(sub_total / 10)
                     print('there is no item to update' if page_num == 0 else 'update item page_num is %s' % page_num)
                 else:
-                    page_num = Helper.get_num_split_comma(page[len(page) - 3].extract())  # 获得总页数
+                    print('this asin profile is not exist')
+                    # p = subprocess.Popen('scrapy crawl profile -a asin=%s -o profile.json -L ERROR' % self.asin,
+                    #                      shell=True,
+                    #                      stdout=subprocess.PIPE,
+                    #                      stderr=subprocess.STDOUT)
+                    # for line in p.stdout.readlines():
+                    #     print(line)
+                    # p.wait()
+
+                    runner = CrawlerRunner(get_project_settings())
+                    runner.crawl(ProfileSpider, self.asin)
+
+                    d = runner.join()
+                    d.addBoth(lambda _: reactor.stop())
+
+                    reactor.run()
+
+                    # page_num = Helper.get_num_split_comma(page[len(page) - 3].extract())  # 获得总页数
+                    page_num = 0  # 获得总页数
             else:
                 page_num = Helper.get_num_split_comma(page[len(page) - 3].extract())  # 获得总页数
             while i <= int(page_num):
                 yield scrapy.Request(url=response.url + '&pageNumber=%s' % i,
                                      callback=self.parse)
-                i = i+1
+                i = i + 1
