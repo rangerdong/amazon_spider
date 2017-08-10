@@ -24,27 +24,31 @@ class ReviewSql(object):
               "(`asin`, `product`, `brand`, `seller`, `image`," \
               "`review_total`, `review_rate`, `pct_five`, `pct_four`, `pct_three`, " \
               "`pct_two`, `pct_one`, `latest_total`) " \
-              "VALUES ('%s', '%s', '%s', '%s', '%s', '%s', " \
+              "VALUES ('%s', %s, %s, %s, '%s', '%s', " \
               "'%s', '%s', '%s', '%s', '%s', '%s', '%s')" %\
-              (item['asin'], item['product'], item['brand'], item['seller'], item['image'],
+              (item['asin'], cls.conn.escape(item['product']), cls.conn.escape(item['brand']), cls.conn.escape(item['seller']), item['image'],
                item['review_total'], item['review_rate'], item['pct_five'], item['pct_four'],
                item['pct_three'], item['pct_two'], item['pct_one'], item['review_total'])
         try:
             if cls.check_exist_profile(item['asin']):
                 cls.update_profile_item(item)
+                print('update review profile--[asin]:', item['asin'])
             else:
                 cls.cursor.execute(sql)
                 cls.conn.commit()
-        except:
+                print('save review profile--[asin]:', item['asin'])
+        except pymysql.MySQLError:
+            with open('sql.log', 'r+') as i:
+                i.write('profile sql error!')
             cls.conn.rollback()
         pass
 
     @classmethod
     def update_profile_item(cls, item):
-        sql = "UPDATE `review_profile` SET `product`='%s', `brand`='%s', `seller`='%s', `review_total`='%s', `review_rate`='%s'," \
+        sql = "UPDATE `review_profile` SET `product`=%s, `brand`=%s, `seller`=%s, `review_total`='%s', `review_rate`='%s'," \
               "`pct_five`='%s', `pct_four`='%s', `pct_three`='%s', `pct_two`='%s', `pct_one`='%s', `latest_total`=`review_total` " \
               "WHERE `asin`='%s'" % \
-              (item['product'], item['brand'], item['seller'], item['review_total'], item['review_rate'],
+              (cls.conn.escape(item['product']), cls.conn.escape(item['brand']), cls.conn.escape(item['seller']), item['review_total'], item['review_rate'],
                item['pct_five'], item['pct_four'], item['pct_three'], item['pct_two'], item['pct_one'], item['asin'])
         try:
             cls.cursor.execute(sql)
@@ -64,8 +68,9 @@ class ReviewSql(object):
     @classmethod
     def insert_detail_item(cls, item):
         sql = "INSERT INTO `review_detail`(`asin`, `review_id`, `reviewer`, `review_url`, `star`, `date`, `title`, `content`) " \
-              "VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')" % \
-              (item['asin'], item['review_id'], item['reviewer'], item['review_url'], item['star'], item['date'], item['title'], item['content'])
+              "VALUES ('%s', '%s', %s, '%s', '%s', '%s', %s, %s)" % \
+              (item['asin'], item['review_id'], cls.conn.escape(item['reviewer']), item['review_url'], item['star'],
+               item['date'], cls.conn.escape(item['title']), cls.conn.escape(item['content']))
         try:
             if cls.check_exist_detail(item['asin'], item['review_id']):
                 pass

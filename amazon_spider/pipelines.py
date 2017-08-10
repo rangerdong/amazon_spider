@@ -17,7 +17,7 @@ class AmazonSpiderPipeline(object):
     def process_item(self, item, spider):
         if isinstance(item, ReviewProfileItem):
             ReviewSql.insert_profile_item(item)
-            print('save review profile--[asin]:', item['asin'])
+
             return item
 
         if isinstance(item, ReviewDetailItem):
