@@ -25,10 +25,10 @@ class ReviewSql(object):
               "`review_total`, `review_rate`, `pct_five`, `pct_four`, `pct_three`, " \
               "`pct_two`, `pct_one`, `latest_total`) " \
               "VALUES ('%s', '%s', '%s', '%s', '%s', '%s', " \
-              "'%s', '%s', '%s', '%s', '%s', '%s', '%s')" %\
+              "'%s', '%s', '%s', '%s', '%s', '%s', 0)" %\
               (item['asin'], item['product'], item['brand'], item['seller'], item['image'],
                item['review_total'], item['review_rate'], item['pct_five'], item['pct_four'],
-               item['pct_three'], item['pct_two'], item['pct_one'], item['review_total'])
+               item['pct_three'], item['pct_two'], item['pct_one'])
         try:
             if cls.check_exist_profile(item['asin']):
                 cls.update_profile_item(item)
@@ -41,10 +41,10 @@ class ReviewSql(object):
 
     @classmethod
     def update_profile_item(cls, item):
-        sql = "UPDATE `review_profile` SET `product`='%s', `brand`='%s', `seller`='%s', `review_total`='%s', `review_rate`='%s'," \
+        sql = "UPDATE `review_profile` SET `product`='%s', `brand`='%s', `seller`='%s', `image`='%s', `review_total`='%s', `review_rate`='%s'," \
               "`pct_five`='%s', `pct_four`='%s', `pct_three`='%s', `pct_two`='%s', `pct_one`='%s', `latest_total`=`review_total` " \
               "WHERE `asin`='%s'" % \
-              (item['product'], item['brand'], item['seller'], item['review_total'], item['review_rate'],
+              (item['product'], item['brand'], item['seller'], item['image'], item['review_total'], item['review_rate'],
                item['pct_five'], item['pct_four'], item['pct_three'], item['pct_two'], item['pct_one'], item['asin'])
         try:
             cls.cursor.execute(sql)
@@ -94,5 +94,11 @@ class ReviewSql(object):
             return item['latest_total']
         else:
             return False
+
+    @classmethod
+    def update_profile_self(cls, asin):
+        sql = "UPDATE `review_profile` SET `latest_total` = `review_total` WHERE `asin`='%s'" % asin
+        cls.cursor.execute(sql)
+
 
 
