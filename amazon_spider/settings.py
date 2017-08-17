@@ -98,11 +98,19 @@ ITEM_PIPELINES = {
 # MYSQL_PORT = '3306'
 # MYSQL_DB = 'amz_spider'
 
+# MYSQL = {
+#     'host': '192.168.214.129',
+#     'port': 3306,
+#     'user': 'amz_spider',
+#     'password': 'zNDcsC3J2f',
+#     'charset': 'utf8mb4',
+#     'database': 'amz_spider'
+# }
 MYSQL = {
-    'host': '192.168.214.129',
+    'host': '192.168.100.51',
     'port': 3306,
-    'user': 'amz_spider',
-    'password': 'zNDcsC3J2f',
+    'user': 'root',
+    'password': 'pricejot',
     'charset': 'utf8mb4',
-    'database': 'amz_spider'
+    'database': 'ipricejot'
 }

@@ -42,6 +42,16 @@ class ReviewDetailItem(scrapy.Item):
     pass
 
 
+class KeywordRankingItem(scrapy.Item):
+    skwd_id = scrapy.Field()
+    rank = scrapy.Field()
+    page = scrapy.Field()
+
+
+class SalesRankingItem(scrapy.Item):
+    sk_id = scrapy.Field()
+    rank = scrapy.Field()
+    classify = scrapy.Field()
 
 
 

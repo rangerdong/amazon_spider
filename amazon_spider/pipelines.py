@@ -4,11 +4,13 @@
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
+from datetime import datetime
+
 from scrapy.exceptions import DropItem
 
 from amazon_spider.helper import Helper
-from amazon_spider.sql import ReviewSql
-from amazon_spider.items import ReviewDetailItem
+from amazon_spider.sql import ReviewSql, RankingSql
+from amazon_spider.items import ReviewDetailItem, SalesRankingItem, KeywordRankingItem
 from amazon_spider.items import ReviewProfileItem
 
 
@@ -17,7 +19,6 @@ class AmazonSpiderPipeline(object):
     def process_item(self, item, spider):
         if isinstance(item, ReviewProfileItem):
             ReviewSql.insert_profile_item(item)
-
             return item
 
         if isinstance(item, ReviewDetailItem):
@@ -30,6 +31,12 @@ class AmazonSpiderPipeline(object):
                 item['date'] = item_date.strftime('%Y-%m-%d')
                 ReviewSql.insert_detail_item(item)
                 print('save review detail--[asin]:', item['asin'], '[reviewID]:', item['review_id'])
-
                 return item
-            pass
+
+        if isinstance(item, SalesRankingItem):
+            RankingSql.insert_sales_ranking(item)
+            return item
+
+        if isinstance(item, KeywordRankingItem):
+            RankingSql.insert_keyword_ranking(item)
+            return item

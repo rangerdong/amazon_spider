@@ -1,5 +1,7 @@
 import datetime
 
+import re
+
 
 class Helper(object):
 
@@ -29,3 +31,9 @@ class Helper(object):
         now = datetime.datetime.now()
         delay14 = now + datetime.timedelta(days=-40)  # 计算往前40天之后的时间
         return delay14
+
+    @classmethod
+    def get_rank_classify(cls, spider_str):
+        result = re.match(r'#(\d*) in (.*) \(.*See Top.*\)', spider_str)
+        return result.groups()
+
