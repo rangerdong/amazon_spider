@@ -119,21 +119,24 @@ class RankingSql(object):
 
     @classmethod
     def insert_sales_ranking(cls, item):
-        sql = "INSERT INTO `%s` VALUES ('%s', '%s', %s, '%s')" % \
+        sql = "INSERT INTO `%s`(`sk_id`, `rank`, `classify`, `date`) VALUES ('%s', '%s', %s, '%s')" % \
               (cls.py_sales_table, item['sk_id'], item['rank'], cls.conn.escape(item['classify']), datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         try:
             cls.cursor.execute(sql)
             cls.conn.commit()
-        except:
+        except pymysql.DatabaseError as error:
+            print(error)
             cls.conn.rollback()
 
     @classmethod
     def insert_keyword_ranking(cls, item):
-        sql = "INSERT INTO `%s` VALUES ('%s', '%s', '%s', '%s')" % \
+        sql = "INSERT INTO `%s`(`skwd_id`, `rank`, `page`, `date`) VALUES ('%s', '%s', '%s', '%s')" % \
               (cls.py_keyword_table, item['skwd_id'], item['rank'], item['page'], datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         try:
             cls.cursor.execute(sql)
             cls.conn.commit()
-        except:
+        except pymysql.DatabaseError as error:
+            print(error)
             cls.conn.rollback()
+
 

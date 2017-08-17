@@ -40,3 +40,5 @@ class AmazonSpiderPipeline(object):
         if isinstance(item, KeywordRankingItem):
             RankingSql.insert_keyword_ranking(item)
             return item
+
+        pass
