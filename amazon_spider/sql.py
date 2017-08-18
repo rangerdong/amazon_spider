@@ -112,7 +112,7 @@ class ReviewSql(object):
 class RankingSql(object):
     conn = conn_db()
     cursor = cursor_db(conn)
-    py_keyword_table = 'py_salesranking_keywords'
+    py_keyword_table = 'py_salesranking_keywords'  # 爬虫抓
     py_sales_table = 'py_salesrankings'
     keyword_table = 'salesranking_keywords'
     sales_table = 'salesrankings'
@@ -121,8 +121,11 @@ class RankingSql(object):
     def insert_sales_ranking(cls, item):
         sql = "INSERT INTO `%s`(`sk_id`, `rank`, `classify`, `date`) VALUES ('%s', '%s', %s, '%s')" % \
               (cls.py_sales_table, item['sk_id'], item['rank'], cls.conn.escape(item['classify']), datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        update_sql = "UPDATE `%s` SET `last_rank`=`rank`, `rank`='%s', `updated_at`=NOW() WHERE `id`='%s'" % \
+                     (cls.sales_table, item['rank'], item['sk_id'])
         try:
             cls.cursor.execute(sql)
+            cls.cursor.execute(update_sql)
             cls.conn.commit()
         except pymysql.DatabaseError as error:
             print(error)
@@ -130,13 +133,47 @@ class RankingSql(object):
 
     @classmethod
     def insert_keyword_ranking(cls, item):
-        sql = "INSERT INTO `%s`(`skwd_id`, `rank`, `page`, `date`) VALUES ('%s', '%s', '%s', '%s')" % \
-              (cls.py_keyword_table, item['skwd_id'], item['rank'], item['page'], datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        sql = "INSERT INTO `%s`(`skwd_id`, `rank`, `date`) VALUES ('%s', '%s', '%s')" % \
+              (cls.py_keyword_table, item['skwd_id'], item['rank'], datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        update_sql = "UPDATE `%s` SET `last_rank`=`rank`, `rank`='%s', `updated_at`=NOW() WHERE `id`='%s'" % \
+                     (cls.keyword_table, item['rank'], item['skwd_id'])
         try:
             cls.cursor.execute(sql)
+            cls.cursor.execute(update_sql)
             cls.conn.commit()
         except pymysql.DatabaseError as error:
             print(error)
             cls.conn.rollback()
+
+    @classmethod
+    def fetch_sales_ranking(cls):
+        sql = "SELECT `id`, `asin` FROM `%s`WHERE `status` =1" % cls.sales_table
+        cls.cursor.execute(sql)
+        item = cls.cursor.fetchall()
+        return item
+
+    @classmethod
+    def fetch_keywords_ranking(cls):
+        sql = "SELECT `a`.`id`, `a`.`keyword`, `a`.`rank` as `rank`, `b`.`asin` as `asin` FROM `%s` as `a` " \
+              "LEFT JOIN `%s` as `b` ON `b`.`id`=`a`.`sk_id`" % \
+              (cls.keyword_table, cls.sales_table)
+        cls.cursor.execute(sql)
+        item = cls.cursor.fetchall()
+        return item
+
+    @classmethod
+    def update_keywords_expire_rank(cls, skwd_id):
+        sql = "UPDATE `%s` SET `last_rank`=`rank`, `rank`=321, `updated_at`=NOW() WHERE `id`='%s'" % (cls.keyword_table, skwd_id)
+        py_sql = "INSERT INTO `%s`(`skwd_id`, `rank`, `date`) VALUES ('%s', 321, NOW())" % (cls.py_keyword_table, skwd_id)
+        try:
+            cls.cursor.execute(sql)
+            cls.cursor.execute(py_sql)
+            cls.conn.commit()
+        except pymysql.DataError as error:
+            print(error)
+            cls.conn.rollback()
+
+
+
 
 

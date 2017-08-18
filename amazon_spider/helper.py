@@ -2,6 +2,8 @@ import datetime
 
 import re
 
+from math import ceil
+
 
 class Helper(object):
 
@@ -37,3 +39,11 @@ class Helper(object):
         result = re.match(r'#(\d*) in (.*) \(.*See Top.*\)', spider_str)
         return result.groups()
 
+    @classmethod
+    def get_keyword_page_num(cls, rank):
+        page_num = ceil(int(rank) / 16)
+        return page_num
+
+    @classmethod
+    def get_keyword_page_range(cls, page_num):
+        return range(page_num - 4 if page_num - 4 > 0 else 1, page_num + 4 if page_num + 4 <= 20 else 20)
