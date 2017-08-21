@@ -39,9 +39,10 @@ class ReviewSql(object):
                 cls.cursor.execute(sql)
                 cls.conn.commit()
                 print('save review profile--[asin]:', item['asin'])
-        except pymysql.MySQLError:
+        except pymysql.MySQLError as e:
             with open('sql.log', 'r+') as i:
-                i.write('profile sql error!')
+                i.write('profile sql error![error]:'+e)
+            print(e)
             cls.conn.rollback()
         pass
 
@@ -56,7 +57,8 @@ class ReviewSql(object):
         try:
             cls.cursor.execute(sql)
             cls.conn.commit()
-        except:
+        except pymysql.MySQLError as e:
+            print(e)
             cls.conn.rollback()
 
     @classmethod
@@ -75,12 +77,11 @@ class ReviewSql(object):
               (item['asin'], item['review_id'], cls.conn.escape(item['reviewer']), item['review_url'], item['star'],
                item['date'], cls.conn.escape(item['title']), cls.conn.escape(item['content']))
         try:
-            if cls.check_exist_detail(item['asin'], item['review_id']):
-                pass
-            else:
+            if cls.check_exist_detail(item['asin'], item['review_id']) is not True:
                 cls.cursor.execute(sql)
                 cls.conn.commit()
-        except:
+        except pymysql.MySQLError as e:
+            print(e)
             cls.conn.rollback()
         pass
 
