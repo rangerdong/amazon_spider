@@ -30,7 +30,7 @@ class AmazonSpiderPipeline(object):
                 item['review_url'] = 'https://www.amazon.com' + item['review_url']
                 item['date'] = item_date.strftime('%Y-%m-%d')
                 ReviewSql.insert_detail_item(item)
-                print('save review detail--[asin]:', item['asin'], '[reviewID]:', item['review_id'])
+
                 return item
 
         if isinstance(item, SalesRankingItem):
