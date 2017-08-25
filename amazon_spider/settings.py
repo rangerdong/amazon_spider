@@ -91,26 +91,12 @@ ITEM_PIPELINES = {
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
 
-#mysql
-# MYSQL_HOST =
-# MYSQL_USER = 'amz_spider'
-# MYSQL_PASSWORD = 'zNDcsC3J2f'
-# MYSQL_PORT = '3306'
-# MYSQL_DB = 'amz_spider'
 
-# MYSQL = {
-#     'host': '192.168.214.129',
-#     'port': 3306,
-#     'user': 'amz_spider',
-#     'password': 'zNDcsC3J2f',
-#     'charset': 'utf8mb4',
-#     'database': 'amz_spider'
-# }
 MYSQL = {
-    'host': '192.168.100.51',
-    'port': 3306,
-    'user': 'root',
-    'password': 'pricejot',
+    'host': '127.0.0.1',
+    'port': 33060,
+    'user': 'homestead',
+    'password': 'secret',
     'charset': 'utf8mb4',
     'database': 'ipricejot'
 }
